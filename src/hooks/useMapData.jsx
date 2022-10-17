@@ -85,7 +85,6 @@ export const useMapData = (map, mapInitialized) => {
 
   const handlePolygonClick = useCallback(
     (e, map) => {
-      console.log(e.lngLat)
       new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`this polygon is located at: Long:${e.lngLat.lng}, Lat:${e.lngLat.lat}`)
