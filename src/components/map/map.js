@@ -49,7 +49,7 @@ export default function Map(props) {
     map.current.on("mouseleave", combinedPolyLayerName, () => {
       map.current.getCanvas().style.cursor = "";
     });
-    map.current.on("click", combinedPolyLayerName, handlePolygonClick);
+    map.current.on("click", combinedPolyLayerName, (e) => handlePolygonClick(e, map.current));
     map.current.on('click', hideTopbar);
     return () => {
       map.current.remove();

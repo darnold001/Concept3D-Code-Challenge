@@ -84,13 +84,14 @@ export const useMapData = (map, mapInitialized) => {
   );
 
   const handlePolygonClick = useCallback(
-    (e) => {
+    (e, map) => {
+      console.log(e.lngLat)
       new maplibregl.Popup()
         .setLngLat(e.lngLat)
-        .setHTML(`this is a popup for ID: ${e.features[0].properties.id}`)
+        .setHTML(`this polygon is located at: Long:${e.lngLat.lng}, Lat:${e.lngLat.lat}`)
         .addTo(map);
     },
-    [map]
+    []
   );
 
   const hideTopbar = useCallback(
