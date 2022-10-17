@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { postRequest } from "./utilitiies";
+import { postRequest } from "../utilitiies";
 import maplibregl from "maplibre-gl";
 import {
   addNewPolygonUrl,
@@ -8,7 +8,7 @@ import {
   updatePolygonUrl,
   combinedPolySourceName,
   combinedPolyLayerName,
-} from "./constants";
+} from "../constants";
 import {
   deletePolygonAction,
   selectLocations,
@@ -16,7 +16,7 @@ import {
   hideShowTopbarAction,
   updatePolygonAction,
   addPolygonAction,
-} from "./mapDataSlice";
+} from "../state/mapDataSlice";
 
 export const useMapData = (map, mapInitialized) => {
   const dispatch = useDispatch();
@@ -152,6 +152,7 @@ export const useMapData = (map, mapInitialized) => {
         map.flyTo({
             center: [lng, lat],
             essential: true,
+            zoom: 15,
         });
     },
     [map]
@@ -159,6 +160,11 @@ export const useMapData = (map, mapInitialized) => {
 
   // <--- End of map utlitiy functions --->
 
+  //Handles panning based on locations being added or removed
+  useEffect(() => {
+    if(mapInitialized && markersToAdd.length > 1) centerMap()
+    else if (markersToAdd.length === 1) flyToLocation(markersToAdd[0]);
+  }, [centerMap, flyToLocation, mapInitialized, markersToAdd, markersToAdd.length]);
 
   // handles locations updates
   useEffect(() => {
@@ -167,11 +173,8 @@ export const useMapData = (map, mapInitialized) => {
       addPointToMap(location, map);
       setAddedMarkers((prev) => [...prev, location.id]);
     });
-    // center the map based on all the new locations
-    if( markersToAdd.length > 1) centerMap()
-    // a single location was added, fly to it
-    if (markersToAdd.length === 1) flyToLocation(markersToAdd[0]);
-  }, [addPointToMap, centerMap, flyToLocation, map, mapInitialized, markersToAdd]);
+  
+  }, [addPointToMap, map, mapInitialized, markersToAdd]);
 
   // handles all polygon updates
   useEffect(() => {

@@ -3,7 +3,7 @@ import "./form.css";
 import { addNewLocationUrl } from "../../constants";
 import { postRequest, isLatitudeValid, isLongitudeValid } from "../../utilitiies";
 import { useDispatch } from "react-redux";
-import { addLocationAction } from "../../mapDataSlice";
+import { addLocationAction } from "../../state/mapDataSlice";
 
 export const Form = () => {
   const dispatch = useDispatch();

@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectShowTopbar, toggleShowTopbarAction } from "../../mapDataSlice";
+import { selectShowTopbar, toggleShowTopbarAction } from "../../state/mapDataSlice";
 import { CloseIcon } from "../closeIcon/closeIcon";
 import "./topbar.css";
 export const TopBar = ({ children }) => {

@@ -1,8 +1,8 @@
-import Map from "./components/map.js";
+import Map from "./components/map/map.js";
 import Navbar from "./components/navBar/navbar.js";
 import "./App.css";
 import { useDispatch, useSelector  } from "react-redux";
-import { addMapDataAction, selectShowTopbar} from "./mapDataSlice.js";
+import { addMapDataAction, selectShowTopbar} from "./state/mapDataSlice.js";
 import { TopBar } from "./components/topBar/topbar";
 import { Form } from "./components/form/form";
 

@@ -3,8 +3,8 @@ import "./map.css";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { useMapData } from "../useMapData";
-import { combinedPolyLayerName } from "../constants";
+import { useMapData } from "../../hooks/useMapData";
+import { combinedPolyLayerName } from "../../constants";
 
 
 export default function Map(props) {
