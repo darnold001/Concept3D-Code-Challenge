@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { postRequest } from "../utilitiies";
 import maplibregl from "maplibre-gl";
@@ -11,23 +11,15 @@ import {
 } from "../constants";
 import {
   deletePolygonAction,
-  selectLocations,
   selectPolygons,
-  hideShowTopbarAction,
   updatePolygonAction,
   addPolygonAction,
 } from "../state/mapDataSlice";
 
-export const useMapData = (map, mapInitialized) => {
+export const useMapPolygons = (map, mapInitialized) => {
   const dispatch = useDispatch();
-  const locations = useSelector(selectLocations);
   const polygons = useSelector(selectPolygons);
-  const [addedMarkers, setAddedMarkers] = useState([]);
 
-  const markersToAdd = useMemo(
-    () => locations.filter((location) => !addedMarkers.includes(location.id)),
-    [locations, addedMarkers]
-  );
 
   const combinedPolygonGeoJSON = useMemo(
     () => ({
@@ -38,7 +30,6 @@ export const useMapData = (map, mapInitialized) => {
   );
 
   // <--- Beginning of event listener callbacks --->
-
   const savePolygon = useCallback(
     (e) => {
       const newPolygon = {
@@ -93,22 +84,7 @@ export const useMapData = (map, mapInitialized) => {
     []
   );
 
-  const hideTopbar = useCallback(
-    () => dispatch(hideShowTopbarAction()),
-    [dispatch]
-  );
-
-  // <--- End of event listener callbacks --->
   // <--- Beginning of map functions --->
-
-  const centerMap = useCallback(() => {
-    const bounds = new maplibregl.LngLatBounds();
-    locations?.forEach(({ lng, lat }) => bounds.extend([lng, lat]));
-    polygons?.forEach(({ geometry }) =>
-      geometry.coordinates[0].forEach((coord) => bounds.extend(coord))
-    );
-    map.fitBounds(bounds, { padding: 40 });
-  }, [locations, map, polygons]);
 
   const removePolygonFromMap = useCallback(() => {
     map?.removeLayer(combinedPolyLayerName);
@@ -136,45 +112,6 @@ export const useMapData = (map, mapInitialized) => {
     [map, removePolygonFromMap]
   );
 
-  const addPointToMap = useCallback(
-    (location) => {
-      const { lat, lng } = location;
-      new maplibregl.Marker({ color: "#FF0000" })
-        .setLngLat([lng, lat])
-        .addTo(map);
-    },
-    [map]
-  );
-
-  const flyToLocation = useCallback(
-    (location) => {
-        const { lat, lng } = location;
-        map.flyTo({
-            center: [lng, lat],
-            essential: true,
-            zoom: 15,
-        });
-    },
-    [map]
-    );
-
-  // <--- End of map utlitiy functions --->
-
-  //Handles panning based on locations being added or removed
-  useEffect(() => {
-    if(mapInitialized && markersToAdd.length > 1) centerMap()
-    else if (markersToAdd.length === 1) flyToLocation(markersToAdd[0]);
-  }, [centerMap, flyToLocation, mapInitialized, markersToAdd, markersToAdd.length]);
-
-  // handles locations updates
-  useEffect(() => {
-    if (!mapInitialized || !markersToAdd.length) return;
-    markersToAdd.forEach((location) => {
-      addPointToMap(location, map);
-      setAddedMarkers((prev) => [...prev, location.id]);
-    });
-  
-  }, [addPointToMap, map, mapInitialized, markersToAdd]);
 
   // handles all polygon updates
   useEffect(() => {
@@ -187,8 +124,6 @@ export const useMapData = (map, mapInitialized) => {
     savePolygon,
     updatePolygon,
     deletePolygon,
-    centerMap,
-    hideTopbar,
     handlePolygonClick,
   };
 };

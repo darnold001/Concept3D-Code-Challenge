@@ -1,10 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./map.css";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import { useMapData } from "../../hooks/useMapData";
+import { useMapPolygons } from "../../hooks/useMapPolygons";
 import { combinedPolyLayerName } from "../../constants";
+import { useDispatch } from "react-redux";
+import { hideShowTopbarAction } from "../../state/mapDataSlice";
+import { useMapPoints } from "../../hooks/useMapPoints";
 
 
 export default function Map(props) {
@@ -17,8 +20,13 @@ export default function Map(props) {
     "https://devtileserver2.concept3d.com/styles/c3d_default_style/style.json"
   );
   const [mapInitialized, setMapInitialized] = useState(false);
+  const dispatch = useDispatch();
+  const hideTopbar = useCallback( () => dispatch(hideShowTopbarAction()),[dispatch]);
 
-  const { savePolygon, updatePolygon, deletePolygon, hideTopbar, handlePolygonClick } = useMapData(map.current, mapInitialized);
+  // instantiate map hooks
+  const { savePolygon, updatePolygon, deletePolygon, handlePolygonClick } = useMapPolygons(map.current, mapInitialized);
+  useMapPoints(map.current, mapInitialized);
+
  
   // Initialize map when component mounts
   useEffect(() => {
